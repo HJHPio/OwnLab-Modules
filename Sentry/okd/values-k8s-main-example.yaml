@@ -1,0 +1,451 @@
+########
+# Init #
+########
+user:
+  create: true
+  email: sentrio@example.local
+  password: abcd
+
+system:
+  url: "https://sentry-okd.example.local"
+
+###############
+# Mail Server #
+###############
+# Setting defaults 
+# mail: 
+#   backend: smtp # use 'dummy' to disable
+#   from: "System Administrator <sentrio@example.local>"
+#   host: "smtp.gmail.com"
+#   port: 587
+#   username: "UNAME"
+#   password: "SECRET"
+#   useTls: true
+#   useSsl: false
+
+####################
+# Service Accounts #
+####################
+clickhouse:
+  serviceAccount:
+    create: true
+    enabled: true
+    name: "sentry-main-clickhouse-sa"
+    automountServiceAccountToken: true
+
+postgresql:
+  serviceAccount:
+    create: true
+    enabled: true
+    name: "sentry-main-postgres-sa"
+    automountServiceAccountToken: true
+
+zookeeper:
+  serviceAccount:
+    create: true
+    enabled: true
+    name: "sentry-main-zookeeper-sa"
+    automountServiceAccountToken: true
+
+kafka:
+  controller:
+    replicaCount: 3
+    ## if the load on the kafka controller increases, resourcesPreset must be increased
+    resourcesPreset: medium # small, medium, large, xlarge, 2xlarge
+    ## if the load on the kafka controller increases, persistence.size must be increased
+    persistence:
+      size: 16Gi
+
+sentry:
+  features:
+    orgSubdomains: true
+    vstsLimitedScopes: true
+    enableProfiling: true
+    enableSessionReplay: true
+    enableFeedback: true
+    enableSpan: true
+  # existingSecretKey: ''
+  # existingSecret: ''
+  singleOrganization: true # using multiple organizations require terraform updates
+  # singleOrganization: false
+  web:
+    env: 
+      - name: SENTRY_SYSTEM_URL
+        value: https://sentry-okd.example.local
+      - name: SENTRY_CSRF_TRUSTED_ORIGINS
+        value: '["https://sentry-okd.example.local"]'
+      - name: SENTRY_EMAIL_BACKEND
+        value: smtp
+      - name: SENTRY_EMAIL_USE_TLS
+        value: 'true'
+      - name: SENTRY_EMAIL_USE_SSL
+        value: 'false'
+      - name: SENTRY_EMAIL_USERNAME
+        value: UNAME
+      - name: SENTRY_EMAIL_PASSWORD
+        value: SECRET
+      - name: SENTRY_EMAIL_PORT
+        value: '587'
+      - name: SENTRY_EMAIL_HOST
+        value: smtp.gmail.com
+      - name: SENTRY_EMAIL_FROM
+        value: SentryioExample Administrator <sentrio@example.local>
+
+images:
+  sentry:
+    # repository: getsentry/sentry
+    # tag: Chart.AppVersion
+    pullPolicy: IfNotPresent
+    imagePullSecrets: []
+  snuba:
+    # repository: getsentry/snuba
+    # tag: Chart.AppVersion
+    pullPolicy: IfNotPresent
+    imagePullSecrets: []
+  relay:
+    # repository: getsentry/relay
+    # tag: Chart.AppVersion
+    pullPolicy: IfNotPresent
+    imagePullSecrets: []
+  symbolicator:
+    # repository: getsentry/symbolicator
+    # tag: Chart.AppVersion
+    # pullPolicy: IfNotPresent
+    imagePullSecrets: []
+  vroom:
+    # repository: getsentry/vroom
+    # tag: Chart.AppVersion
+    pullPolicy: IfNotPresent
+    imagePullSecrets: []
+    
+##########################################################################################################
+# Below this configuration line, you'll primarily find the definitions for resource limits and requests. #
+##########################################################################################################    
+  # web: 
+    resources:
+      requests:
+        cpu: 200m
+        memory: 1700Mi
+        ephemeral-storage: 1700Mi
+      limits:
+        memory: 1700Mi
+        ephemeral-storage: 1700Mi
+  
+  billingMetricsConsumer:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+      limits:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+  
+  genericMetricsConsumer:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  ingestConsumerAttachments:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 700Mi
+        ephemeral-storage: 1400Mi
+      limits:
+        cpu: 200m
+        memory: 700Mi
+        ephemeral-storage: 1400Mi
+  
+  ingestConsumerEvents:
+    resources:
+      requests:
+        cpu: 300m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 300m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  ingestConsumerTransactions:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  ingestFeedback:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+      limits:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+  
+  ingestMonitors:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+      limits:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+  
+  ingestOccurrences:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+      limits:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+  
+  ingestReplayRecordings:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+      limits:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+  
+  metricsConsumer:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  monitorsClockTasks:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+      limits:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+  
+  monitorsClockTick:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+      limits:
+        cpu: 100m
+        memory: 250Mi
+        ephemeral-storage: 500Mi
+  
+  postProcessForwardErrors:
+    resources:
+      requests:
+        cpu: 150m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 150m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  postProcessForwardIssuePlatform:
+    resources:
+      requests:
+        cpu: 300m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 300m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  postProcessForwardTransactions:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  subscriptionConsumerEvents:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  subscriptionConsumerGenericMetrics:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  subscriptionConsumerMetrics:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  subscriptionConsumerTransactions:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  worker:
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 1100Mi
+        ephemeral-storage: 2200Mi
+      limits:
+        cpu: 1000m
+        memory: 1100Mi
+        ephemeral-storage: 2200Mi
+
+hooks:
+  
+  dbCheck:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi
+        ephemeral-storage: 128Mi
+      requests:
+        cpu: 100m
+        memory: 64Mi
+        ephemeral-storage: 128Mi
+  
+  dbInit:
+    resources:
+      limits:
+        memory: 4096Mi
+        ephemeral-storage: 8192Mi
+      requests:
+        memory: 4096Mi
+        ephemeral-storage: 8192Mi
+  
+  snubaInit:
+    resources:
+      limits:
+        cpu: 2000m
+        memory: 1Gi
+        ephemeral-storage: 2Gi
+      requests:
+        cpu: 2000m
+        memory: 1Gi
+        ephemeral-storage: 2Gi
+
+vroom:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 700Mi
+      ephemeral-storage: 1400Mi
+    limits:
+      cpu: 100m
+      memory: 700Mi
+      ephemeral-storage: 1400Mi
+
+metrics:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 100Mi
+      ephemeral-storage: 200Mi
+    requests:
+      cpu: 100m
+      memory: 100Mi
+      ephemeral-storage: 200Mi
+
+relay:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 700Mi
+      ephemeral-storage: 1400Mi
+    limits:
+      cpu: 100m
+      memory: 700Mi
+      ephemeral-storage: 1400Mi
+
+snuba:
+  api:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 300Mi
+        ephemeral-storage: 300Mi
+      limits:
+        memory: 300Mi
+        ephemeral-storage: 300Mi
+  
+  subscriptionConsumerMetrics:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+  
+  subscriptionConsumerTransactions:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
+      limits:
+        cpu: 200m
+        memory: 500Mi
+        ephemeral-storage: 1000Mi
