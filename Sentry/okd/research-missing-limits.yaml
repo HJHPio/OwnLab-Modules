@@ -1,0 +1,61 @@
+#########
+# TODO: #
+#########
+# After a long deployment period
+# - Monitor resource usage
+# - Update the resources below so that limits equal requests for RAM and ephemeral storage
+# - Add any missing pod deployments/statefulsets from sentry-main namespace
+nginx:
+  resources: {}
+pgbouncer:
+  resources: {}
+rabbitmq:
+  resources: {}
+relay:
+  init:
+    resources: {}
+sentry:
+  cron:
+    resources: {}
+  ingestProfiles:
+    resources: {}
+  workerEvents:
+    resources: {}
+  workerTransactions:
+    resources: {}
+snuba:
+  consumer:
+    resources: {}
+  genericMetricsCountersConsumer:
+    resources: {}
+  genericMetricsDistributionConsumer:
+    resources: {}
+  genericMetricsSetsConsumer:
+    resources: {}
+  groupAttributesConsumer:
+    resources: {}
+  issueOccurrenceConsumer:
+    resources: {}
+  metricsConsumer:
+    resources: {}
+  outcomesBillingConsumer:
+    resources: {}
+  outcomesConsumer:
+    resources: {}
+  profilingFunctionsConsumer:
+    resources: {}
+  profilingProfilesConsumer:
+    resources: {}
+  replacer:
+    resources: {}
+  replaysConsumer:
+    resources: {}
+  spansConsumer:
+    resources: {}
+  subscriptionConsumerEvents:
+    resources: {}
+  transactionsConsumer:
+    resources: {}
+symbolicator:
+  api:
+    resources: {}
