@@ -1,0 +1,32 @@
+image:
+  registry: "quay.io"
+  repository: "k3rnel-pan1c/uptime-kuma"
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+
+route:
+  enabled: true
+
+resources:
+  limits:
+    memory: 256Mi
+  requests:
+    memory: 256Mi
+
+persistence:
+  enabled: true
+  sizeLimit: 8Gi
+  storageClass: "nfs-client"
+
+serviceMonitor:
+  enabled: false # update to true for monitoring in prometheus
+  authentication:
+    enabled: true 
+    existingSecret: "uptime-kuma-credentials"
+    existingSecretUsernameKey: username
+    existingSecretPasswordKey: password
+
+testPod:
+  image: docker.io/busybox@sha256:2919d0172f7524b2d8df9e50066a682669e6d170ac0f6a49676d54358fe970b5
